@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from flask import Flask, request
 
 CREATE_TABLES = (
-    "CREATE TABLE IF NOT EXISTS users(cpf TEXT PRIMARY KEY, name TEXT, born_date TEXT);"
+    "CREATE TABLE IF NOT EXISTS users(cpf BIGINT PRIMARY KEY, name TEXT, born_date DATE);"
 )
 
 INSERT_USER = (
@@ -29,7 +29,7 @@ connection = psycopg2.connect(
     host=url,
     port='5432')
 
-@app.post("/api/user")
+@app.post("/api/createUser")
 def create_user():
     data = request.get_json()
     cpf, name, born_date = data["cpf"], data["name"], data["born_date"]
@@ -39,7 +39,7 @@ def create_user():
             # cursor.execute(INSERT_USER, (cpf, name, born_date,))
             cursor.execute(INSERT_USER_RETURN_ID, (cpf, name, born_date,))
             user_cpf = cursor.fetchone()[0]
-        return {"cpf": user_cpf, "message": f"User {cpf} created."}, 201
+        return {"cpf": user_cpf, "message": f"User {name} created."}, 201
     
 
 @app.get("/api/getUser/<cpf>")
